@@ -31,7 +31,7 @@ class SyncSQLAlchemy(web.RequestHandler):
     def query(self):
         session = self.application.Session()
         number = random.randrange(10000)
-        user = session.query(User).filter_by(name=number).first()
+        user = session.query(User).filter_by(id=number).first()
         return user;
 
 class AsyncSQLAlchemy(web.RequestHandler):
@@ -46,7 +46,7 @@ class AsyncSQLAlchemy(web.RequestHandler):
         context = asyncio.get_event_loop()
         session = self.application.Session()
         number = random.randrange(10000)
-        cursor = session.query(User).filter_by(name=number)
+        cursor = session.query(User).filter_by(id=number)
         user = yield from context.run_in_executor(None, cursor.first)
         return user;
 
@@ -75,7 +75,7 @@ class Application(web.Application):
         ]
         url = 'mysql+pymysql://{0}:{1}@{2}:{3}/{4}'\
             .format('mysql', 'mysql', '52.68.180.154', 3306, 'tutorial')
-        engine = create_engine(url, pool_size=200)
+        engine = create_engine(url, pool_size=500)
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.Session = Session
